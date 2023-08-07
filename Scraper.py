@@ -33,3 +33,10 @@ class SaveToJsonPipeline:
           def close_spider(self, spider):
                     with open('data.json', 'w') as f:
                               json.dump(self.items, f, indent=2)
+
+process = CrawlerProcess(settings={
+    'ITEM_PIPELINES': {'__main__.SaveToJsonPipeline': 1},
+})
+
+process.crawl(AnimeSpider)
+process.start()
