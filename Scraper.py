@@ -22,3 +22,14 @@ class AnimeSpider(scrapy.Spider):
                               yield scrapy.Request(url=response.urljoin(next_page), callback=self.parse)
 
 
+class SaveToJsonPipeline:
+          def __init__(self):
+                    self.items = []
+
+          def process_item(self, item, spider):
+                    self.items.append(item)
+                    return item
+
+          def close_spider(self, spider):
+                    with open('data.json', 'w') as f:
+                              json.dump(self.items, f, indent=2)
