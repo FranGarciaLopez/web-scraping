@@ -6,6 +6,9 @@ class AnimeSpider(scrapy.Spider):
           name = 'anime_spider'
           start_urls = ['https://www3.animeflv.net/browse']
           allowed_domains = ['animeflv.net']
+    custom_settings = {
+            'LOG_LEVEL': logging.INFO 
+    }
 
           def parse(self, response):
           
