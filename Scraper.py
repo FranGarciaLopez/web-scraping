@@ -40,6 +40,7 @@ class SaveToJsonPipeline:
                 json.dump(self.items, f, indent=2)
             self.file_written = True
 
+
 class TestAnimeSpider(unittest.TestCase):
 
     def setUp(self):
@@ -59,9 +60,38 @@ class TestAnimeSpider(unittest.TestCase):
             self.assertEqual(next_page_request.url, 'https://www3.animeflv.net/next-page')
             self.assertEqual(next_page_request.callback, spider.parse)
 
-          def close_spider(self, spider):
-                    with open('data.json', 'w') as f:
-                              json.dump(self.items, f, indent=2)
+
+class TestSaveToJsonPipeline(unittest.TestCase):
+
+    def test_pipeline(self):
+        pipeline = SaveToJsonPipeline()
+        mock_spider = Mock()
+
+        item = {'title': 'Test Title'}
+        pipeline.process_item(item, mock_spider)
+
+        self.assertEqual(pipeline.items, [item])
+
+        with patch('builtins.open', mock_open()) as mock_file:
+            pipeline.close_spider(mock_spider)
+            expected_calls = [
+                call('[\n  '),
+                call('{'),
+                call('\n    '),
+                call('"title"'),
+                call(': '),
+                call('"Test Title"'),
+                call('\n  '),
+                call('}'),
+                call('\n')
+            ]
+
+            actual_calls = mock_file().write.mock_calls
+
+            # Check if each expected call matches the actual call
+            for expected_call, actual_call in zip(expected_calls, actual_calls):
+                    self.assertEqual(expected_call, actual_call)
+
 
 process = CrawlerProcess(settings={
     'ITEM_PIPELINES': {'__main__.SaveToJsonPipeline': 1},
