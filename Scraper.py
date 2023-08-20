@@ -26,8 +26,20 @@ class AnimeSpider(scrapy.Spider):
 
 
 class SaveToJsonPipeline:
-          def __init__(self):
-                    self.items = []
+    def __init__(self):
+        self.items = []
+        self.file_written = False
+
+    def process_item(self, item, spider):
+        self.items.append(item)
+        return item
+
+    def close_spider(self, spider):
+        if not self.file_written:
+            with open('data.json', 'w') as f:
+                json.dump(self.items, f, indent=2)
+            self.file_written = True
+
 class TestAnimeSpider(unittest.TestCase):
 
     def setUp(self):
