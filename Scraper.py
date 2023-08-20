@@ -28,10 +28,17 @@ class AnimeSpider(scrapy.Spider):
 class SaveToJsonPipeline:
           def __init__(self):
                     self.items = []
+class TestAnimeSpider(unittest.TestCase):
 
-          def process_item(self, item, spider):
-                    self.items.append(item)
-                    return item
+    def setUp(self):
+        self.mock_response = HtmlResponse(url='https://www3.animeflv.net/browse', body=b'<html><body><h3 class="Title">Title 1</h3><h3 class="Title">Title 2</h3></body></html>')
+
+    def test_parse_function(self):
+        spider = AnimeSpider()
+        parsed_items = list(spider.parse(self.mock_response))
+        expected_items = [{'title': 'Title 1'}, {'title': 'Title 2'}]
+        self.assertEqual(parsed_items, expected_items)
+
 
           def close_spider(self, spider):
                     with open('data.json', 'w') as f:
