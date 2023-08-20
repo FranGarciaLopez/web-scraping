@@ -102,5 +102,7 @@ process = CrawlerProcess(settings={
     'ITEM_PIPELINES': {'__main__.SaveToJsonPipeline': 1},
 })
 
+
 process.crawl(AnimeSpider)
 process.start()
+unittest.main()
