@@ -39,6 +39,13 @@ class TestAnimeSpider(unittest.TestCase):
         expected_items = [{'title': 'Title 1'}, {'title': 'Title 2'}]
         self.assertEqual(parsed_items, expected_items)
 
+    def test_next_page_navigation(self):
+        spider = AnimeSpider()
+        with patch('scrapy.http.HtmlResponse.css') as mock_css:
+            mock_css.return_value.get.return_value = '/next-page'
+            next_page_request = next(spider.parse(self.mock_response))
+            self.assertEqual(next_page_request.url, 'https://www3.animeflv.net/next-page')
+            self.assertEqual(next_page_request.callback, spider.parse)
 
           def close_spider(self, spider):
                     with open('data.json', 'w') as f:
